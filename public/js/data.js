@@ -73,7 +73,11 @@ Data.prototype={
 			
 			if(!oFrom || !oTo){
 			}else if(this.points!=''){
-				oApplication.tLayer[this.idLayer].linkPoint(oFrom,oTo,this.points,this.strokeStyle,this.lineWidth);
+				if(oApplication.pointIdSelected!==''){
+					oApplication.tLayer[this.idLayer].linkPointWithSelected(oFrom,oTo,this.points,oApplication.pointIdSelected,this.strokeStyle,this.lineWidth);
+				}else{
+					oApplication.tLayer[this.idLayer].linkPoint(oFrom,oTo,this.points,this.strokeStyle,this.lineWidth);
+				}
 			}else{
 				console.log('oFrom et oTo'+oFrom+' '+oTo);
 				oApplication.tLayer[this.idLayer].link(oFrom,oTo,this.strokeStyle,this.lineWidth);
@@ -301,9 +305,30 @@ Data.prototype={
 				sHtml+='<tr>';
 					sHtml+='<th>Actions</th>';
 					sHtml+='<td>';
-						sHtml+='<input type="button" onclick="oApplication.updateObject('+this.id+',\'points\',\'\')" value="Refresh link"/>';
+						sHtml+='<input type="button" onclick="oApplication.updateObject('+this.id+',\'points\',\'\');oApplication.reloadForm('+this.id+');" value="Refresh link"/>';
 					sHtml+='</td>';
 				sHtml+='</tr>';
+				
+				if(this.points!=''){
+				sHtml+='<tr>';
+					sHtml+='<th>Points</th>';
+					sHtml+='<td>';
+					
+					var tPoint=this.points.split(';');
+					var j=1;
+					for(var i=0;i<tPoint.length;i++){
+						if(tPoint[i]==''){ continue; }
+						sHtml+='<a ';
+						if(oApplication.pointIdSelected===i){
+							sHtml+='style="font-weight:bold" ';
+						}
+						sHtml+='href="#" onclick="oApplication.selectPoint('+i+');return false;">Point '+(j)+'</a> <a href="#" onclick="oApplication.deletePoint('+i+')">[remove]</a><br/>';
+						j++;
+					}
+					
+					sHtml+='</td>';
+				sHtml+='</tr>';
+				}
 				
 				
 			sHtml+='</table>';

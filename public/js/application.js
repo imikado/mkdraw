@@ -16,6 +16,8 @@ function Application(){
 	
 	this.tMenuLayer=Array();
 	this.tMenuLayerObject=Array();
+	
+	this.pointIdSelected='';
 }
 Application.prototype={
 	
@@ -104,6 +106,32 @@ Application.prototype={
 		}
 		
 		this.loadForm(idObject);
+	},
+	selectPoint:function(idPoint){
+		this.pointIdSelected=idPoint;
+		
+		var oLink=this.getObject(this.idObjectSelected);
+		oApplication.buildLayer(oLink.idLayer);
+		
+		oApplication.clearForm();
+		this.pointIdSelected=idPoint;
+		oApplication.loadForm(this.idObjectSelected);
+	},
+	deletePoint:function(idPoint){
+		var oLink=this.getObject(this.idObjectSelected);
+		var tPoint=oLink.points.split(';');
+		tPoint[idPoint]='';
+		oLink.points=tPoint.join(';');
+		
+		oApplication.buildLayer(oLink.idLayer);
+		
+		oApplication.clearForm();
+		this.pointIdSelected=idPoint;
+		oApplication.loadForm(this.idObjectSelected);
+	},
+	
+	deselectPoint:function(){
+		this.pointIdSelected='';
 	},
 	updateTexte:function(a){
 		var sText=prompt('Choisir libelle',a.innerHTML);
@@ -318,8 +346,24 @@ Application.prototype={
 			this.drawType=this.getObject(this.idObjectSelected).type;
 			if(this.drawType=='link'){
 				var oLink=this.getObject(this.idObjectSelected);
-				oLink.points+=x+':'+y+';';
+				
+				if(this.pointIdSelected===''){
+					oLink.points+=x+':'+y+';';
+				}else{
+					
+					var tPoints=oLink.points.split(';');
+					tPoints[this.pointIdSelected]=x+':'+y+';';
+					
+					oLink.points=tPoints.join(';');
+					
+				}
+				
+				var tmpSelectedPointId=this.pointIdSelected;
+				
 				oApplication.buildLayer(oLink.idLayer);
+				oApplication.clearForm();
+				this.pointIdSelected=tmpSelectedPointId;
+				oApplication.loadForm(oLink.id);
 				return;
 			}else if(this.processing==0){
 				
@@ -522,9 +566,14 @@ Application.prototype={
 		return oApplication.tObject[id];
 	},
 	clearForm:function(){
+		this.pointIdSelected='';
 		this.setContent('formEdit','');
 	},
 	loadForm:function(id){
+		this.addContent('formEdit',this.getObject(id).getForm() );
+	},
+	reloadForm:function(id){
+		this.clearForm();
 		this.addContent('formEdit',this.getObject(id).getForm() );
 	},
 	updateObject:function(id,field,value){

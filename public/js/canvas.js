@@ -94,6 +94,40 @@ Canvas.prototype={
 		this.ctx.lineTo(x2,y2);
 		this.ctx.stroke();
 	},
+	linkPointWithSelected:function(oFrom,oTo,sPoints,iSelectedPointId,color,border){
+		
+		var x1=oFrom.x+(oFrom.width/2);
+		var y1=oFrom.y+(oFrom.height/2);
+		
+		var x2=oTo.x+(oTo.width/2);
+		var y2=oTo.y+(oTo.height/2);
+		
+		this.ctx.beginPath();
+		this.ctx.lineWidth=border;
+		this.ctx.strokeStyle = color;
+		this.ctx.moveTo(x1,y1);
+		
+		if(sPoints!=''){
+			
+			var tPoints=sPoints.split(';');
+			for(var i=0;i<tPoints.length;i++){
+				var tPoint=tPoints[i].split(':');
+				var xPoint=tPoint[0];
+				var yPoint=tPoint[1];
+				
+				this.ctx.lineTo(xPoint,yPoint);
+				
+				if(i==iSelectedPointId){
+					this.ctx.fillRect(xPoint-5,yPoint-5,10,10,'#880000');
+					
+				}
+			}
+			
+		}
+		
+		this.ctx.lineTo(x2,y2);
+		this.ctx.stroke();
+	},
 	arrow: function(x1,y1,x2,y2,strokeStyle,lineWidth){
 		
 		this.ctx.beginPath();
