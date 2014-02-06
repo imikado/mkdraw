@@ -45,13 +45,86 @@ Canvas.prototype={
 		this.ctx.stroke();
 	}
 	,
-	link:function(oFrom,oTo,color,border){
+	getXByPosition:function(object,position){
+		var x1;
+		var y1;
+		if(position=='left-top'){
+			x1=object.x;
+			y1=object.y;
+		}else if(position=='top'){
+			x1=object.x+(object.width/2);
+			y1=object.y;
+		}else if(position=='right-top'){
+			x1=object.x+(object.width);
+			y1=object.y;
+		}else if(position=='left-center'){
+			x1=object.x;
+			y1=object.y+(object.height/2);
+		}else if(position=='center'){
+			x1=object.x+(object.width/2);
+			y1=object.y+(object.height/2);
+		}else if(position=='right-center'){
+			x1=object.x+(object.width);
+			y1=object.y+(object.height/2);
+		}else if(position=='left-bottom'){
+			x1=object.x;
+			y1=object.y+(object.height);
+		}else if(position=='bottom'){
+			x1=object.x+(object.width/2);
+			y1=object.y+(object.height);
+		}else if(position=='right-bottom'){
+			x1=object.x+(object.width);
+			y1=object.y+(object.height);
+		}
 		
-		var x1=oFrom.x+(oFrom.width/2);
-		var y1=oFrom.y+(oFrom.height/2);
+		console.log(object.x+' :'+x1);
 		
-		var x2=oTo.x+(oTo.width/2);
-		var y2=oTo.y+(oTo.height/2);
+		return x1;
+	}
+	,
+	getYByPosition:function(object,position){
+		var x1;
+		var y1;
+		if(position=='left-top'){
+			x1=object.x;
+			y1=object.y;
+		}else if(position=='top'){
+			x1=object.x+(object.width/2);
+			y1=object.y;
+		}else if(position=='right-top'){
+			x1=object.x+(object.width);
+			y1=object.y;
+		}else if(position=='left-center'){
+			x1=object.x;
+			y1=object.y+(object.height/2);
+		}else if(position=='center'){
+			x1=object.x+(object.width/2);
+			y1=object.y+(object.height/2);
+		}else if(position=='right-center'){
+			x1=object.x+(object.width);
+			y1=object.y+(object.height/2);
+		}else if(position=='left-bottom'){
+			x1=object.x;
+			y1=object.y+(object.height);
+		}else if(position=='bottom'){
+			x1=object.x+(object.width/2);
+			y1=object.y+(object.height);
+		}else if(position=='right-bottom'){
+			x1=object.x+(object.width);
+			y1=object.y+(object.height);
+		}
+		
+		return y1;
+	}
+	,
+	link:function(oFrom,oTo,fromPosition,toPosition,color,border){
+		
+		
+		var x1=this.getXByPosition(oFrom,fromPosition);
+		var y1=this.getYByPosition(oFrom,fromPosition);
+		
+		var x2=this.getXByPosition(oTo,toPosition);
+		var y2=this.getYByPosition(oTo,toPosition);
 		
 		//calcul centre
 		var xCenter=x1+((x2-x1)/2);
@@ -65,13 +138,13 @@ Canvas.prototype={
 		this.ctx.lineTo(x2,y2);
 		this.ctx.stroke();
 	},
-	linkPoint:function(oFrom,oTo,sPoints,color,border){
+	linkPoint:function(oFrom,oTo,fromPosition,toPosition,sPoints,color,border){
 		
-		var x1=oFrom.x+(oFrom.width/2);
-		var y1=oFrom.y+(oFrom.height/2);
+		var x1=this.getXByPosition(oFrom,fromPosition);
+		var y1=this.getYByPosition(oFrom,fromPosition);
 		
-		var x2=oTo.x+(oTo.width/2);
-		var y2=oTo.y+(oTo.height/2);
+		var x2=this.getXByPosition(oTo,toPosition);
+		var y2=this.getYByPosition(oTo,toPosition);
 		
 		this.ctx.beginPath();
 		this.ctx.lineWidth=border;
@@ -94,13 +167,13 @@ Canvas.prototype={
 		this.ctx.lineTo(x2,y2);
 		this.ctx.stroke();
 	},
-	linkPointWithSelected:function(oFrom,oTo,sPoints,iSelectedPointId,color,border){
+	linkPointWithSelected:function(oFrom,oTo,fromPosition,toPosition,sPoints,iSelectedPointId,color,border){
 		
-		var x1=oFrom.x+(oFrom.width/2);
-		var y1=oFrom.y+(oFrom.height/2);
+		var x1=this.getXByPosition(oFrom,fromPosition);
+		var y1=this.getYByPosition(oFrom,fromPosition);
 		
-		var x2=oTo.x+(oTo.width/2);
-		var y2=oTo.y+(oTo.height/2);
+		var x2=this.getXByPosition(oTo,toPosition);
+		var y2=this.getYByPosition(oTo,toPosition);
 		
 		this.ctx.beginPath();
 		this.ctx.lineWidth=border;
@@ -165,6 +238,29 @@ Canvas.prototype={
 		this.ctx.fillRect(x,y,ilargeur,ihauteur);
 		this.ctx.closePath();
 
+	},
+	fillTextAlign:function(x,y,texte,textAlign,width,height,strokeStyle,size){
+		
+		var x1;
+		var y1;
+		this.ctx.textAlign='left';
+		
+		if(textAlign=='left'){
+			x1=x;
+			y1=y;
+		}else if(textAlign=='center'){
+			x1=x+(width/2);
+			y1=y;
+			this.ctx.textAlign='center';
+		}else if(textAlign=='right'){
+			x1=x+(width);
+			y1=y;
+		}
+		
+		this.ctx.font=size+"px Arial";
+		this.ctx.textBaseline = 'top';
+		this.ctx.fillStyle=strokeStyle;
+		this.ctx.fillText(texte,x1,y1);
 	},
 	drawRectStroke : function(x,y,ilargeur,ihauteur,contour,width){
 
@@ -283,16 +379,12 @@ Canvas.prototype={
 		this.ctx.fillText(texte,x,y);
 	}
 	,
-	drawLosange: function (x,y,ilargeur,ihauteur,couleur,fond){
+	drawLosange: function (x,y,ilargeur,ihauteur,lineWidth,strokeStyle,fillStyle) {
 
 		// fond='#222222';
 
-		this.ctx.lineWidth=1;
-		if(couleur!='#000000'){
-			this.ctx.lineWidth=2;
-
-		}
-
+		this.ctx.lineWidth=lineWidth;
+		
 		this.ctx.beginPath();
 		this.ctx.moveTo(x,y+(ihauteur/2) );
 
@@ -303,10 +395,10 @@ Canvas.prototype={
 		this.ctx.lineTo(x,y+(ihauteur/2));
 
 
-		this.ctx.strokeStyle = couleur;
+		this.ctx.strokeStyle = strokeStyle;
 		this.ctx.stroke();
 
-		this.ctx.fillStyle=fond;
+		this.ctx.fillStyle=fillStyle;
 		this.ctx.fill();
 
 		this.ctx.closePath();

@@ -7,6 +7,7 @@ function Data(type,idLayer){
 	this.y2;
 	
 	this.texte='';
+	this.textAlign='left';
 	this.id=oApplication.idObject;
 	this.size=11;
 	this.visible=1;
@@ -17,6 +18,9 @@ function Data(type,idLayer){
 	
 	this.from;
 	this.to;
+	
+	this.fromPosition='center';
+	this.toPosition='center';
 	
 	this.comment='comment';
 	
@@ -55,7 +59,7 @@ Data.prototype={
 		
 		if(this.type=='carre'){
 			oApplication.tLayer[this.idLayer].drawRect(this.x,this.y,this.width,this.height,this.lineWidth,this.strokeStyle,this.fillStyle);
-			oApplication.tLayer[this.idLayer].fillText(this.x+10,this.y+10,this.texte,this.strokeStyle,this.size);
+			oApplication.tLayer[this.idLayer].fillTextAlign(this.x,this.y+10,this.texte,this.textAlign,this.width,this.height,this.strokeStyle,this.size);
 		}else if(this.type=='texte'){
 			oApplication.tLayer[this.idLayer].fillText(this.x,this.y,this.texte,this.strokeStyle,this.size);
 		}else if(this.type=='ligne'){
@@ -64,7 +68,10 @@ Data.prototype={
 			oApplication.tLayer[this.idLayer].arrow(this.x,this.y,this.x2,this.y2,this.strokeStyle,this.lineWidth);
 		}else if(this.type=='bdd'){
 			oApplication.tLayer[this.idLayer].drawBdd(this.x,this.y,this.width,this.height,this.lineWidth,this.strokeStyle,this.fillStyle);
-			oApplication.tLayer[this.idLayer].fillText(this.x+10,this.y+30,this.texte,this.strokeStyle,this.size);
+			oApplication.tLayer[this.idLayer].fillTextAlign(this.x,this.y+10,this.texte,this.textAlign,this.width,this.height,this.strokeStyle,this.size);
+		}else if(this.type=='losange'){
+			oApplication.tLayer[this.idLayer].drawLosange(this.x,this.y,this.width,this.height,this.lineWidth,this.strokeStyle,this.fillStyle);
+			oApplication.tLayer[this.idLayer].fillTextAlign(this.x,this.y+(this.height/2)-10,this.texte,this.textAlign,this.width,this.height,this.strokeStyle,this.size);
 		}else if(this.type=='link'){
 			
 			var oFrom=oApplication.getObject(this.from);
@@ -74,13 +81,13 @@ Data.prototype={
 			if(!oFrom || !oTo){
 			}else if(this.points!=''){
 				if(oApplication.pointIdSelected!==''){
-					oApplication.tLayer[this.idLayer].linkPointWithSelected(oFrom,oTo,this.points,oApplication.pointIdSelected,this.strokeStyle,this.lineWidth);
+					oApplication.tLayer[this.idLayer].linkPointWithSelected(oFrom,oTo,this.fromPosition,this.toPosition,this.points,oApplication.pointIdSelected,this.strokeStyle,this.lineWidth);
 				}else{
-					oApplication.tLayer[this.idLayer].linkPoint(oFrom,oTo,this.points,this.strokeStyle,this.lineWidth);
+					oApplication.tLayer[this.idLayer].linkPoint(oFrom,oTo,this.fromPosition,this.toPosition,this.points,this.strokeStyle,this.lineWidth);
 				}
 			}else{
 				console.log('oFrom et oTo'+oFrom+' '+oTo);
-				oApplication.tLayer[this.idLayer].link(oFrom,oTo,this.strokeStyle,this.lineWidth);
+				oApplication.tLayer[this.idLayer].link(oFrom,oTo,this.fromPosition,this.toPosition,this.strokeStyle,this.lineWidth);
 				
 			}
 		}
@@ -133,7 +140,7 @@ Data.prototype={
 		var sHtml='';
 		sHtml+='<p><strong>Commentaire</strong><input type="text" onKeyUp="oApplication.updateObject('+this.id+',\'comment\',this.value);oApplication.addLayerObject('+this.idLayer+');" value="'+this.comment+'"/></p>';
 		
-		if(this.type=='carre' || this.type=='bdd'){
+		if(this.type=='carre' || this.type=='bdd' || this.type=='losange'){
 			sHtml+='<table>';
 			sHtml+='<tr>';
 				sHtml+='<th>Width</th>';
@@ -198,6 +205,21 @@ Data.prototype={
 				sHtml+='<td><input class="number" type="text" onKeyUp="oApplication.updateObject('+this.id+',\'size\',this.value)" value="'+this.size+'"/></td>';
 
 			sHtml+='</tr>';
+			
+			sHtml+='<tr>';
+				sHtml+='<th>Alignement</th>';
+				sHtml+='<td>';
+					sHtml+='<select onchange="oApplication.updateObject('+this.id+',\'textAlign\',this.value)">';
+						sHtml+='<option value="left">Left</option>';
+						sHtml+='<option value="center">Center</option>';
+						sHtml+='<option value="right">right</option>';
+					sHtml+='</select>';
+					
+				sHtml+='</td>';
+				
+			
+			sHtml+='</tr>';
+			
 			
 			
 			
@@ -264,7 +286,7 @@ Data.prototype={
 							sHtml+='<option></option>';
 							for(var i=0;i< oApplication.tObject.length;i++){
 								if(!oApplication.tObject[i]){ continue; }
-								if(oApplication.tObject[i].type=='carre' || oApplication.tObject[i].type=='bdd'){
+								if(oApplication.tObject[i].type=='carre' || oApplication.tObject[i].type=='bdd' || oApplication.tObject[i].type=='losange'){
 									sHtml+='<option ';
 									if(this.from==oApplication.tObject[i].id){
 										sHtml+=' selected="selected"';
@@ -273,6 +295,27 @@ Data.prototype={
 								}
 							}
 						sHtml+='</select>';
+						
+					sHtml+='</td><td colspan="2">'
+					
+						var tPosition=[
+							["left-top","top","right-top"],
+							["left-center","center","right-center"],
+							["left-bottom","bottom","right-bottom"],
+						];
+						
+						for(var i=0;i<3;i++){
+							for(var j=0;j<3;j++){
+								sHtml+='<input type="radio" onclick="oApplication.updateObject('+this.id+',\'fromPosition\',this.value)" ';
+								if(this.fromPosition==tPosition[i][j]){
+									sHtml+='checked="checked"';
+								}
+								sHtml+='name="fromPosition" value="'+tPosition[i][j]+'"/>';
+							}
+							sHtml+='<br/>';
+						}
+					
+					 
 					sHtml+='</td>';
 				sHtml+='</tr>';
 				sHtml+='<tr>';
@@ -282,7 +325,7 @@ Data.prototype={
 							sHtml+='<option></option>';
 							for(var i=0;i< oApplication.tObject.length;i++){
 								if(!oApplication.tObject[i]){ continue; }
-								if(oApplication.tObject[i].type=='carre' || oApplication.tObject[i].type=='bdd'){
+								if(oApplication.tObject[i].type=='carre' || oApplication.tObject[i].type=='bdd' || oApplication.tObject[i].type=='losange'){
 									sHtml+='<option ';
 									if(this.to==oApplication.tObject[i].id){
 										sHtml+=' selected="selected"';
@@ -291,6 +334,23 @@ Data.prototype={
 								}
 							}
 						sHtml+='</select>';
+						sHtml+='</td><td colspan="2">'
+						var tPosition=[
+							["left-top","top","right-top"],
+							["left-center","center","right-center"],
+							["left-bottom","bottom","right-bottom"],
+						];
+						
+						for(var i=0;i<3;i++){
+							for(var j=0;j<3;j++){
+								sHtml+='<input type="radio" onclick="oApplication.updateObject('+this.id+',\'toPosition\',this.value)" ';
+								if(this.toPosition==tPosition[i][j]){
+									sHtml+='checked="checked"';
+								}
+								sHtml+='name="toPosition" value="'+tPosition[i][j]+'"/>';
+							}
+							sHtml+='<br/>';
+						}
 					sHtml+='</td>';
 				sHtml+='</tr>';
 				

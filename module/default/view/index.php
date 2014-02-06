@@ -50,11 +50,15 @@ background:#aaa;
 .layerObjectSelected a{
 color:white;
 }
-.btn{
+.btn, .btnSelected{
 border:0px solid gray;
 padding:6px;
 background:#ddd;
 text-decoration:none;
+display:block;
+float:left;
+margin:4px;
+width:70px;
 }
 .btnSelected{
 border:0px solid gray;
@@ -121,16 +125,22 @@ function save(){
 <div id="menudrawContent">
 </div>
 <div>
-<p>
+
 	<a href="#" id="btn_carre" class="btn" onclick="oApplication.chooseType('carre');">Carre</a>
+	<a href="#" id="btn_bdd" class="btn" onclick="oApplication.chooseType('bdd');">BDD</a>
+	<a href="#" id="btn_losange" class="btn" onclick="oApplication.chooseType('losange');">Losange</a>
+
+<div style="clear:both"></div>
 	<a href="#" id="btn_texte" class="btn" onclick="oApplication.chooseType('texte');">Texte</a>
 	<a href="#" id="btn_ligne" class="btn" onclick="oApplication.chooseType('ligne');">Ligne</a>
 	<a href="#" id="btn_fleche" class="btn" onclick="oApplication.chooseType('fleche');">Fleche</a>
-	<a href="#" id="btn_bdd" class="btn" onclick="oApplication.chooseType('bdd');">BDD</a>
+	<div style="clear:both"></div>
+	
 	<a href="#" id="btn_link" class="btn" onclick="oApplication.chooseType('link');">Lien</a>
 	
-</p>
+
 </div>
+	<div style="clear:both"></div>
 	<p><input onclick="oApplication.addLayer()" type="button" value="Add layer"/> <input type="button" value="save" onclick="save()"/></p>
 <div id="formEdit"></div>
 </div>

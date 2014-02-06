@@ -321,7 +321,11 @@ Application.prototype={
 				this.oCanvasTmp.line(this.tmpX,this.tmpY,x,y,'green',2);
 			}else if(this.drawType=='bdd'){
 				this.oCanvasTmp.drawBdd(this.tmpX,this.tmpY,iWidth,iHeight,1,'green','#fff');
+			}else if(this.drawType=='losange'){
+				this.oCanvasTmp.drawLosange(this.tmpX,this.tmpY,iWidth,iHeight,1,'green','#fff');
 			}
+			
+			
 		}
 	},
 	clearCanvasTmp:function(){
@@ -375,7 +379,7 @@ Application.prototype={
 				
 					this.clearType();
 					return;
-				}else if(this.drawType=='carre' || this.drawType=='bdd'){
+				}else if(this.drawType=='carre' || this.drawType=='bdd' || this.drawType=='losange'){
 					var oCarre=this.getObject(this.idObjectSelected);
 					oCarre.x=x
 					oCarre.y=y;
@@ -451,6 +455,37 @@ Application.prototype={
 			return;
 			
 		}else if(this.drawType=='carre' & this.processing==1){
+			this.processing=0;
+			
+			var iWidth=(x-this.tmpX);
+			var iHeight=(y-this.tmpY);
+			
+			var oData=new Data(this.drawType,this.idLayerSelected);
+			oData.x=this.tmpX;
+			oData.y=this.tmpY;
+			oData.width=iWidth;
+			oData.height=iHeight;
+			
+			oData.lineWidth=1;
+			oData.fillStyle='#ffffff';
+			oData.strokeStyle='#222222';
+			
+			oData.build();
+			
+			this.addLayerObject(this.idLayerSelected,oData);
+			
+			this.clearCanvasTmp();
+			
+		}else if(this.drawType=='losange' & this.processing==0){
+			
+			this.tmpX=x;
+			this.tmpY=y;
+			
+			this.processing=1;
+			
+			return;
+			
+		}else if(this.drawType=='losange' & this.processing==1){
 			this.processing=0;
 			
 			var iWidth=(x-this.tmpX);
