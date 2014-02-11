@@ -42,6 +42,48 @@ Application.prototype={
 			}
 		}*/
 	},
+	deleteIdObjectFromLayerObject:function(idObject,idLayer){
+				
+		this.clearMenuObject(idLayer);
+		
+		var tmpLayerObject=Array();
+		
+		for(var i=0;i<this.tMenuLayerObject[idLayer].length;i++){
+			if(!this.tMenuLayerObject[idLayer][i]){ continue;}
+			
+			var tmpObject=this.getObject(this.tMenuLayerObject[idLayer][i]);
+			
+			if(idObject!= tmpObject.id){
+				
+				tmpLayerObject.push(this.tMenuLayerObject[idLayer][i]);
+				
+			}
+		}
+		
+		this.tMenuLayerObject[idLayer]=tmpLayerObject;
+		
+		
+		this.builListMenuLayerObject(idLayer);
+		
+	},
+	moveObjetToLayer:function(idObject,idLayer){
+		
+		var oObject=this.getObject(idObject);
+		
+		//on supprime l'objet de la liste des layers object precendents
+		this.deleteIdObjectFromLayerObject(oObject.id,oObject.idLayer);
+		
+		oObject.idLayer=idLayer;
+		
+		if(!oApplication.tMenuLayerObject[idLayer]){
+			oApplication.tMenuLayerObject[idLayer]=Array();
+		}
+		
+		oApplication.tMenuLayerObject[idLayer].unshift(idObject);
+		
+		this.clearMenuObject(idLayer);
+		this.builListMenuLayerObject(idLayer);
+	},
 	showHideLayer:function(idLayer){
 		var a=getById('checkbox_'+idLayer);
 		if(a){
@@ -157,6 +199,9 @@ Application.prototype={
 		console.log('layer '+idLayer);
 		
 		var sLayer='<p class="layer" id="layer_'+idLayer+'" >';
+		
+		sLayer+='<a style="float:left;margin-right:4px;padding:2px" href="" onclick="oApplication.showHideMenuObject('+idLayer+');return false;" >[+]</a>';
+		
 		sLayer+='<input onclick="oApplication.showHideLayer('+idLayer+')" id="checkbox_'+idLayer+'" type="checkbox" checked="checked"/>';
 		
 		sLayer+='<a href="#" style="padding-right:37px" onclick="oApplication.selectLayer('+idLayer+');return false;" >Calque '+idLayer+'</a>';
@@ -171,6 +216,18 @@ Application.prototype={
 		
 		
 	},
+	showHideMenuObject:function(idLayer){
+		var a=getById('objectLayer_'+idLayer);
+		if(a){
+			if(a.style.display=='none'){
+				a.style.display='block';
+			}else{
+				a.style.display='none';
+			}
+			
+		}
+	}
+	,
 	clearMenuObject:function(idLayer){
 		var a=getById('objectLayer_'+idLayer);
 		if(a){
@@ -616,6 +673,18 @@ Application.prototype={
 	},
 	updateInfo:function(id){
 		this.getObject(id).updateInfo();
+	},
+	showHideFormPart:function(i){
+		var a=getById('form_part_'+i);
+		if(a){
+			if(a.style.display=='none'){
+				a.style.display='block';
+			}else{
+				a.style.display='none';
+			}
+			
+		}
+		
 	}
 	
 }; 

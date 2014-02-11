@@ -25,6 +25,8 @@ background:#ffffff;
 }
 #menudrawContent{
 height:300px;
+border:1px solid gray;
+overflow:auto;
 }
 .layer{
 margin:2px;
@@ -39,12 +41,12 @@ color:white;
 }
 .layerObject{
 margin:2px;
-margin-left:8px;
+margin-left:30px;
 background:#eee;
 }
 .layerObjectSelected{
 margin:2px;
-margin-left:8px;
+margin-left:30px;
 background:#aaa;
 }
 .layerObjectSelected a{
@@ -90,6 +92,14 @@ width:50px;
 	padding:20px;
 	border:4px solid #b9b01b;
 	background:#faf496;
+}
+.formPart{
+	background:gray;
+	margin:2px;
+}
+.formPart a{
+	color:white;
+	text-decoration:none;
 }
 </style>
 <script>
@@ -186,6 +196,12 @@ for(var i=0;i< tObject.length;i++){
 	oData.relativeObject=tObject[i].relativeObject;
 	oData.relativeX=tObject[i].relativeX;
 	oData.relativeY=tObject[i].relativeY;
+	oData.textAlign=tObject[i].textAlign;
+	oData.strokeStyleText=tObject[i].strokeStyleText;
+	
+	oData.fromPosition=tObject[i].fromPosition;
+	oData.toPosition=tObject[i].toPosition;
+	
 	//oData.type=tObject[i].type;
 	//oData.idLayer=tObject[i].idLayer;
 	oData.build();

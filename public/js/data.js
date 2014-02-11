@@ -15,6 +15,8 @@ function Data(type,idLayer){
 	this.fillStyle='#ffffff';
 	this.lineWidth=2;
 	this.strokeStyle='#000000';
+	this.strokeStyleText='#000000';
+	
 	
 	this.from;
 	this.to;
@@ -59,7 +61,7 @@ Data.prototype={
 		
 		if(this.type=='carre'){
 			oApplication.tLayer[this.idLayer].drawRect(this.x,this.y,this.width,this.height,this.lineWidth,this.strokeStyle,this.fillStyle);
-			oApplication.tLayer[this.idLayer].fillTextAlign(this.x,this.y+10,this.texte,this.textAlign,this.width,this.height,this.strokeStyle,this.size);
+			oApplication.tLayer[this.idLayer].fillTextAlign(this.x,this.y+10,this.texte,this.textAlign,this.width,this.height,this.strokeStyleText,this.size);
 		}else if(this.type=='texte'){
 			oApplication.tLayer[this.idLayer].fillText(this.x,this.y,this.texte,this.strokeStyle,this.size);
 		}else if(this.type=='ligne'){
@@ -68,7 +70,7 @@ Data.prototype={
 			oApplication.tLayer[this.idLayer].arrow(this.x,this.y,this.x2,this.y2,this.strokeStyle,this.lineWidth);
 		}else if(this.type=='bdd'){
 			oApplication.tLayer[this.idLayer].drawBdd(this.x,this.y,this.width,this.height,this.lineWidth,this.strokeStyle,this.fillStyle);
-			oApplication.tLayer[this.idLayer].fillTextAlign(this.x,this.y+10,this.texte,this.textAlign,this.width,this.height,this.strokeStyle,this.size);
+			oApplication.tLayer[this.idLayer].fillTextAlign(this.x,this.y+10,this.texte,this.textAlign,this.width,this.height,this.strokeStyleText,this.size);
 		}else if(this.type=='losange'){
 			oApplication.tLayer[this.idLayer].drawLosange(this.x,this.y,this.width,this.height,this.lineWidth,this.strokeStyle,this.fillStyle);
 			oApplication.tLayer[this.idLayer].fillTextAlign(this.x,this.y+(this.height/2)-10,this.texte,this.textAlign,this.width,this.height,this.strokeStyle,this.size);
@@ -136,94 +138,139 @@ Data.prototype={
 			oApplication.buildLayer(this.idLayer);
 		}
 	},
+	
 	getForm:function(){
 		var sHtml='';
-		sHtml+='<p><strong>Commentaire</strong><input type="text" onKeyUp="oApplication.updateObject('+this.id+',\'comment\',this.value);oApplication.addLayerObject('+this.idLayer+');" value="'+this.comment+'"/></p>';
+		sHtml+='<p><strong>Commentaire</strong><input type="text" onKeyUp="oApplication.updateObject('+this.id+',\'comment\',this.value);oApplication.addLayerObject('+this.idLayer+');" value="'+this.comment+'"/>';
+			sHtml+='<select onChange="oApplication.moveObjetToLayer('+this.id+',this.value)" >';
+				for(var i=0;i< oApplication.tLayer.length;i++){
+					if(!oApplication.tLayer[i]){ continue ; }
+					sHtml+='<option ';
+					if(i==this.idLayer){
+						sHtml+='selected="selected" ';
+					}
+					sHtml+='value="'+i+'">Layer '+i+'</option>';
+				}
+			sHtml+='</select>';
+		sHtml+='</p>';
 		
 		if(this.type=='carre' || this.type=='bdd' || this.type=='losange'){
-			sHtml+='<table>';
-			sHtml+='<tr>';
-				sHtml+='<th>Width</th>';
-				sHtml+='<td><input class="number" type="text" onKeyUp="oApplication.updateObject('+this.id+',\'width\',this.value)" value="'+this.width+'"/></td>';
 			
-				sHtml+='<th>Height</th>';
-				sHtml+='<td><input class="number" type="text" onKeyUp="oApplication.updateObject('+this.id+',\'height\',this.value)" value="'+this.height+'"/></td>';
-			sHtml+='</tr>';
-			sHtml+='<tr>';
-				sHtml+='<th>X</th>';
-				sHtml+='<td><input class="number" type="text" onKeyUp="oApplication.updateObject('+this.id+',\'x\',this.value)" value="'+this.x+'"/></td>';
+			sHtml+='<p class="formPart"><a href="#" onclick="oApplication.showHideFormPart(1);return false;">Position</a></p>';
 			
-				sHtml+='<th>Y</th>';
-				sHtml+='<td><input class="number" type="text" onKeyUp="oApplication.updateObject('+this.id+',\'y\',this.value)" value="'+this.y+'"/></td>';
-			sHtml+='</tr>';
 			
-			sHtml+='<tr>';
-				sHtml+='<th>Position</th>';
-				sHtml+='<td colspan="3">';
+			sHtml+='<div id="form_part_1" style="display:none">';
 				
-					sHtml+='<select onchange="oApplication.updateObject('+this.id+',\'relativeObject\',this.value)">';
-						sHtml+='<option value="">Fixe</option>';
-						for(var i=0;i< oApplication.tObject.length;i++){
-							if(!oApplication.tObject[i]){ continue; }
-							if(oApplication.tObject[i].type=='carre' || oApplication.tObject[i].type=='bdd'){
-								sHtml+='<option ';
-								if(this.relativeObject==oApplication.tObject[i].id){
-									sHtml+=' selected="selected"';
+				sHtml+='<table>';
+				sHtml+='<tr>';
+					sHtml+='<th>Width</th>';
+					sHtml+='<td><input class="number" type="text" onKeyUp="oApplication.updateObject('+this.id+',\'width\',this.value)" value="'+this.width+'"/></td>';
+
+					sHtml+='<th>Height</th>';
+					sHtml+='<td><input class="number" type="text" onKeyUp="oApplication.updateObject('+this.id+',\'height\',this.value)" value="'+this.height+'"/></td>';
+				sHtml+='</tr>';
+				sHtml+='<tr>';
+					sHtml+='<th>X</th>';
+					sHtml+='<td><input class="number" type="text" onKeyUp="oApplication.updateObject('+this.id+',\'x\',this.value)" value="'+this.x+'"/></td>';
+
+					sHtml+='<th>Y</th>';
+					sHtml+='<td><input class="number" type="text" onKeyUp="oApplication.updateObject('+this.id+',\'y\',this.value)" value="'+this.y+'"/></td>';
+				sHtml+='</tr>';
+
+				sHtml+='<tr>';
+					sHtml+='<th>Position</th>';
+					sHtml+='<td colspan="3">';
+
+						sHtml+='<select onchange="oApplication.updateObject('+this.id+',\'relativeObject\',this.value)">';
+							sHtml+='<option value="">Fixe</option>';
+							for(var i=0;i< oApplication.tObject.length;i++){
+								if(!oApplication.tObject[i]){ continue; }
+								if(oApplication.tObject[i].type=='carre' || oApplication.tObject[i].type=='bdd'){
+									sHtml+='<option ';
+									if(this.relativeObject==oApplication.tObject[i].id){
+										sHtml+=' selected="selected"';
+									}
+									sHtml+=' value="'+oApplication.tObject[i].id+'">Relatif &agrave; '+oApplication.tObject[i].type+' #'+oApplication.tObject[i].id+' '+oApplication.tObject[i].comment+'</option>';
 								}
-								sHtml+=' value="'+oApplication.tObject[i].id+'">Relatif &agrave; '+oApplication.tObject[i].type+' #'+oApplication.tObject[i].id+' '+oApplication.tObject[i].comment+'</option>';
 							}
-						}
-					sHtml+='</select>';
-				
-				sHtml+='</td>';
-			sHtml+='</tr>';
-			
-			sHtml+='<tr>';
-				sHtml+='<th>couleur bord</th>';
-				sHtml+='<td><input class="number" type="color" onChange="oApplication.updateObject('+this.id+',\'strokeStyle\',this.value)" value="'+this.strokeStyle+'"/></td>';
-			
-				sHtml+='<th>epaisseur</th>';
-				sHtml+='<td><input class="number" type="text" onKeyUp="oApplication.updateObject('+this.id+',\'lineWidth\',this.value)" value="'+this.lineWidth+'"/></td>';
-			sHtml+='</tr>';
-			
-			sHtml+='<tr>';
-				sHtml+='<th>couleur fond</th>';
-				sHtml+='<td><input class="number" type="color" onChange="oApplication.updateObject('+this.id+',\'fillStyle\',this.value)" value="'+this.fillStyle+'"/></td>';
-			sHtml+='</tr>';
-			
-			sHtml+='<tr>';
-				sHtml+='<th>Texte</th>';
-				sHtml+='<td colspan="3"><input class="texte" type="text" onKeyUp="oApplication.updateObject('+this.id+',\'texte\',this.value)" value="'+this.texte+'"/></td>';
-			sHtml+='</tr>';
+						sHtml+='</select>';
 
-			sHtml+='<tr>';
-				sHtml+='<th>couleur</th>';
-				sHtml+='<td><input class="number" type="color" onChange="oApplication.updateObject('+this.id+',\'strokeStyle\',this.value)" value="'+this.strokeStyle+'"/></td>';
+					sHtml+='</td>';
+				sHtml+='</tr>';
+				sHtml+='</table>';
+			sHtml+='</div>';
+			
+			sHtml+='<p class="formPart"><a href="#" onclick="oApplication.showHideFormPart(2);return false;">Couleurs</a></p>';
+			
+			
+			sHtml+='<div id="form_part_2" style="display:none">';
+			
+				sHtml+='<table>';
+				sHtml+='<tr>';
+					sHtml+='<th>couleur bord</th>';
+					sHtml+='<td><input class="number" type="color" onChange="oApplication.updateObject('+this.id+',\'strokeStyle\',this.value)" value="'+this.strokeStyle+'"/></td>';
+
+					sHtml+='<th>epaisseur</th>';
+					sHtml+='<td><input class="number" type="text" onKeyUp="oApplication.updateObject('+this.id+',\'lineWidth\',this.value)" value="'+this.lineWidth+'"/></td>';
+				sHtml+='</tr>';
+
+				sHtml+='<tr>';
+					sHtml+='<th>couleur fond</th>';
+					sHtml+='<td><input class="number" type="color" onChange="oApplication.updateObject('+this.id+',\'fillStyle\',this.value)" value="'+this.fillStyle+'"/></td>';
+				sHtml+='</tr>';
+
+				sHtml+='</table>';
+			sHtml+='</div>';
+			
+			sHtml+='<p class="formPart"><a href="#" onclick="oApplication.showHideFormPart(3);return false;">Texte</a></p>';
+			
+			sHtml+='<div id="form_part_3" style="display:none">';
+			
+				sHtml+='<table>';
+
+				sHtml+='<tr>';
+					sHtml+='<th>Texte</th>';
+					sHtml+='<td colspan="3"><input class="texte" type="text" onKeyUp="oApplication.updateObject('+this.id+',\'texte\',this.value)" value="'+this.texte+'"/></td>';
+				sHtml+='</tr>';
+
+				sHtml+='<tr>';
+					sHtml+='<th>couleur</th>';
+					sHtml+='<td><input class="number" type="color" onChange="oApplication.updateObject('+this.id+',\'strokeStyleText\',this.value)" value="'+this.strokeStyleText+'"/></td>';
 
 
-				sHtml+='<th>taille</th>';
-				sHtml+='<td><input class="number" type="text" onKeyUp="oApplication.updateObject('+this.id+',\'size\',this.value)" value="'+this.size+'"/></td>';
+					sHtml+='<th>taille</th>';
+					sHtml+='<td><input class="number" type="text" onKeyUp="oApplication.updateObject('+this.id+',\'size\',this.value)" value="'+this.size+'"/></td>';
 
-			sHtml+='</tr>';
+				sHtml+='</tr>';
+
+				sHtml+='<tr>';
+					sHtml+='<th>Alignement</th>';
+					sHtml+='<td>';
+						sHtml+='<select onchange="oApplication.updateObject('+this.id+',\'textAlign\',this.value)">';
+							sHtml+='<option '; if(this.textAlign=='left'){ sHtml+='selected="selected"'; } sHtml+=' value="left">Left</option>';
+							sHtml+='<option '; if(this.textAlign=='center'){ sHtml+='selected="selected"'; } sHtml+='  value="center">Center</option>';
+							sHtml+='<option '; if(this.textAlign=='right'){ sHtml+='selected="selected"'; } sHtml+='  value="right">right</option>';
+						sHtml+='</select>';
+
+					sHtml+='</td>';
+
+
+				sHtml+='</tr>';
+
+				sHtml+='</table>';
+			sHtml+='</div>';
 			
-			sHtml+='<tr>';
-				sHtml+='<th>Alignement</th>';
-				sHtml+='<td>';
-					sHtml+='<select onchange="oApplication.updateObject('+this.id+',\'textAlign\',this.value)">';
-						sHtml+='<option value="left">Left</option>';
-						sHtml+='<option value="center">Center</option>';
-						sHtml+='<option value="right">right</option>';
-					sHtml+='</select>';
-					
-				sHtml+='</td>';
-				
+			sHtml+='<p class="formPart"><a href="#" onclick="oApplication.showHideFormPart(4);return false;">Information</a></p>';
 			
-			sHtml+='</tr>';
+			sHtml+='<div id="form_part_4" style="display:none">';
 			
+				sHtml+='<table>';
+				sHtml+='<tr>';
+				sHtml+='<td><textarea style="width:280px;height:80px" onKeyUp="oApplication.updateObject('+this.id+',\'info\',this.value);oApplication.updateInfo('+this.id+');">'+this.info+'</textarea></td>';
+				sHtml+='</tr>';
+				sHtml+='</table>';
+			sHtml+='</div>';
 			
-			
-			
-			sHtml+='</table>';
 		}else if(this.type=="texte"){
 			sHtml+='<table>';
 				sHtml+='<tr>';
@@ -395,10 +442,7 @@ Data.prototype={
 			
 		}
 		
-		if(this.type=='carre' || this.type=='bdd'){
-			sHtml+='<strong>Information</strong><br/>';
-			sHtml+='<textarea onKeyUp="oApplication.updateObject('+this.id+',\'info\',this.value);oApplication.updateInfo('+this.id+');">'+this.info+'</textarea>';
-		}
+	 
 		return sHtml;
 	},
 	updateInfo:function(){

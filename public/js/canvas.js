@@ -240,7 +240,15 @@ Canvas.prototype={
 
 	},
 	fillTextAlign:function(x,y,texte,textAlign,width,height,strokeStyle,size){
-		
+	
+		if(!strokeStyle){
+			strokeStyle='#000000';
+		}
+	
+		if(textAlign!='left' & textAlign!='center' & textAlign!='right' ){
+			textAlign='left';
+		}
+	
 		var x1;
 		var y1;
 		this.ctx.textAlign='left';
@@ -280,7 +288,7 @@ Canvas.prototype={
 		this.ctx.strokeStyle=strokeStyle;
 		this.ctx.fillStyle=fillStyle;
 		
-		var hauteurEllipse=30;
+		var hauteurEllipse=10;
 		 
 		//this.line(x,y,x,y+ihauteur);
 		//this.line(x+ilargeur,y,x+ilargeur,y+ihauteur);
@@ -372,6 +380,10 @@ Canvas.prototype={
 	
 	,
 	fillText:function(x,y,texte,couleur,size){
+		console.log('txt:'+couleur);
+		if(!couleur){
+			couleur='#000000';
+		}
 		
 		this.ctx.font=size+"px Arial";
 		this.ctx.textBaseline = 'top';
