@@ -72,6 +72,15 @@ text-decoration:none;
 .number{
 width:50px;
 }
+.edit{
+	position:absolute;
+	border:0px solid gray;
+	cursor:pointer;
+	padding:4px;
+	width:10px;
+	height:10px;
+	background: url('css/images/edit.png') no-repeat;
+}
 .bulleInfo{
 	position:absolute;
 	background:darkblue;
@@ -158,6 +167,9 @@ function save(){
 <canvas id="canvas_tmp" class="canvas" width="900px" height="800px"  onclick="oApplication.click(event)" onmousemove="oApplication.mousemove(event)"></canvas>
 
 <div id="tInfo"></div>
+
+<div id="tEdit"></div>
+
 
 <script>
 oApplication.load();

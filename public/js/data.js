@@ -442,8 +442,32 @@ Data.prototype={
 			
 		}
 		
+		if(this.type=='carre' || this.type=='bdd' || this.type=='losange'){
+			
+			sHtml+='<p><input type="button" value="Dupliquer" onclick="oApplication.duplicateObject('+this.id+')" /></p>';
+		}
+		
 	 
 		return sHtml;
+	},
+	enableEdit:function(){
+		
+		var divEdit=getById('edit_'+this.id);
+		if(divEdit){
+			divEdit.style.top=(this.y-5)+'px';
+			divEdit.style.left=(this.x+10)+'px';
+			
+		}else{
+		
+			var sHtml='';
+			sHtml+='<div id="edit_'+this.id+'" onclick="oApplication.selectObject('+this.id+')"  class="edit" style="left:'+(this.x+10)+'px;top:'+(this.y-5)+'px;">';
+
+			sHtml+='&nbsp;';
+
+			sHtml+='</div>';
+
+			oApplication.addContent('tEdit',sHtml);
+		}
 	},
 	updateInfo:function(){
 		

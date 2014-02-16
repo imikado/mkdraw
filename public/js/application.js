@@ -128,6 +128,19 @@ Application.prototype={
 		if(a){
 			a.className='layerSelected';
 		}
+		
+		var a=getById('tEdit');
+		if(a){
+			a.innerHTML='';
+		}
+		for(var i=0;i<this.tObject.length;i++){
+			if(!this.tObject[i]){ continue; }
+			if(this.tObject[i].idLayer==idLayer && (this.tObject[i].type=="carre" || this.tObject[i].type=="bdd") ){
+				
+				this.tObject[i].enableEdit();
+			}
+			
+		}
 	},
 	deselectObject:function(){
 		var a=getById('layerObject_'+this.idObjectSelected);
@@ -214,6 +227,47 @@ Application.prototype={
 		
 		this.addContent('menudrawContent',sLayer);
 		
+		
+	},
+	duplicateObject:function(idObject){
+		var oTmpData=this.getObject(idObject);
+		
+		var oNewData=new Data(oTmpData.type,oTmpData.idLayer);
+		oNewData.x=oNewData.x+10;
+		
+		var tColumn=Array(
+					'strokeStyle',
+					'fillStyle',
+					'width',
+					'height',
+					'from',
+					'comment',
+					'to',
+					'lineWidth',
+					'x2',
+					'y2',
+					'texte',
+					'size',
+					'info',
+					'relativeObject',
+					'relativeX',
+					'relativeY',
+					'textAlign',
+					'strokeStyleText',
+					'fromPosition',
+					'toPosition'
+			
+				);
+		
+		for(var i=0;i<tColumn.length;i++){
+			oNewData[tColumn[i] ]=oTmpData[tColumn[i] ];
+		}
+		
+		oNewData.build();
+		
+		this.tObject.push(oNewData);
+		
+		oApplication.addLayerObject(oTmpData.idLayer,oNewData);
 		
 	},
 	showHideMenuObject:function(idLayer){
@@ -445,6 +499,8 @@ Application.prototype={
 					oApplication.clearForm();
 					oApplication.loadForm(oCarre.id);
 					
+					oCarre.enableEdit();
+					
 					this.clearCanvasTmp();
 				
 					this.clearType();
@@ -670,6 +726,8 @@ Application.prototype={
 	},
 	updateObject:function(id,field,value){
 		this.getObject(id).update(field,value);
+		
+		this.getObject(id).enableEdit();
 	},
 	updateInfo:function(id){
 		this.getObject(id).updateInfo();

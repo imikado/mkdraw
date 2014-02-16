@@ -126,16 +126,40 @@ Canvas.prototype={
 		var x2=this.getXByPosition(oTo,toPosition);
 		var y2=this.getYByPosition(oTo,toPosition);
 		
-		//calcul centre
-		var xCenter=x1+((x2-x1)/2);
-		
 		this.ctx.beginPath();
 		this.ctx.lineWidth=border;
 		this.ctx.strokeStyle = color;
-		this.ctx.moveTo(x1,y1);
-		this.ctx.lineTo(xCenter,y1);
-		this.ctx.lineTo(xCenter,y2);
-		this.ctx.lineTo(x2,y2);
+		
+		if(
+				(fromPosition.indexOf('right')>-1 && toPosition.indexOf('top')>-1 )
+				||
+				(fromPosition.indexOf('right')>-1 && toPosition.indexOf('bottom')>-1 )
+				||
+				(fromPosition.indexOf('left')>-1 && toPosition.indexOf('top')>-1 )
+				||
+				(fromPosition.indexOf('left')>-1 && toPosition.indexOf('bottom')>-1 )
+				
+				
+		){
+			console.log('cas 1');
+			this.ctx.moveTo(x1,y1);
+			this.ctx.lineTo(x2,y1);
+			//this.ctx.lineTo(xCenter,y2);
+			this.ctx.lineTo(x2,y2);
+			
+		}else{
+		console.log('cas 2');
+			//calcul centre
+			var xCenter=x1+((x2-x1)/2);
+
+			this.ctx.moveTo(x1,y1);
+			this.ctx.lineTo(xCenter,y1);
+			this.ctx.lineTo(xCenter,y2);
+			this.ctx.lineTo(x2,y2);
+			
+		}
+		
+		
 		this.ctx.stroke();
 	},
 	linkPoint:function(oFrom,oTo,fromPosition,toPosition,sPoints,color,border){
