@@ -230,11 +230,15 @@ Application.prototype={
 		
 	},
 	duplicateObject:function(idObject){
+		//on recupere l'objet à dupliquer
 		var oTmpData=this.getObject(idObject);
 		
+		//on cree un nouvel objet
 		var oNewData=new Data(oTmpData.type,oTmpData.idLayer);
-		oNewData.x=oNewData.x+10;
+		//que l'on decale de 10, afin de le voir
+		oNewData.x=oTmpData.x+10;
 		
+		//liste des propriétés à copier
 		var tColumn=Array(
 					'strokeStyle',
 					'fillStyle',
@@ -244,6 +248,7 @@ Application.prototype={
 					'comment',
 					'to',
 					'lineWidth',
+					'y',
 					'x2',
 					'y2',
 					'texte',
@@ -259,15 +264,17 @@ Application.prototype={
 			
 				);
 		
+		//on boucle sur ce tableau pour copier les propriétés
+		//sur le nouvel objet
 		for(var i=0;i<tColumn.length;i++){
 			oNewData[tColumn[i] ]=oTmpData[tColumn[i] ];
 		}
-		
+		//on demande à l'afficher.
 		oNewData.build();
 		
-		this.tObject.push(oNewData);
+		this.addLayerObject(oTmpData.idLayer,oNewData);
 		
-		oApplication.addLayerObject(oTmpData.idLayer,oNewData);
+		this.selectObject(oNewData.id);
 		
 	},
 	showHideMenuObject:function(idLayer){
